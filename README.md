@@ -41,7 +41,7 @@ Detect CSV row changes on merge to `main` and send SCIM SET events:
 on:
   push:
     branches: [main]
-    paths: ['csv_files/**/*.csv']
+    paths: ['<csv-directory>/**/*.csv']
 
 jobs:
   push-entities:
@@ -55,7 +55,7 @@ jobs:
       - uses: SGNL-ai/csv-entity-push-action@v1
         with:
           mode: push
-          csv-directory: csv_files
+          csv-directory: <csv-directory>
           entity-push-url: ${{ vars.ENTITY_PUSH_URL }}
           entity-push-iss: ${{ vars.ENTITY_PUSH_ISS }}
           entity-push-aud: ${{ vars.ENTITY_PUSH_AUD }}
@@ -70,7 +70,7 @@ Generate missing IDs and validate on pull request:
 on:
   pull_request:
     branches: [main]
-    paths: ['csv_files/**/*.csv']
+    paths: ['<csv-directory>/**/*.csv']
 
 permissions:
   contents: write
@@ -87,22 +87,24 @@ jobs:
         id: gen
         with:
           mode: generate-ids
-          csv-directory: csv_files
+          csv-directory: <csv-directory>
 
       - name: Commit generated IDs
         if: steps.gen.outputs.ids-generated > 0
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add csv_files/
+          git add <csv-directory>/
           git commit -m "Auto-generate missing CSV row IDs"
           git push
 
       - uses: SGNL-ai/csv-entity-push-action@v1
         with:
           mode: validate
-          csv-directory: csv_files
+          csv-directory: <csv-directory>
 ```
+
+> **Note:** Replace `<csv-directory>` with the path to your CSV directory (e.g., `csv_files`). The `paths` filter, `csv-directory` input, and `git add` path must all match.
 
 ## CSV Conventions
 
