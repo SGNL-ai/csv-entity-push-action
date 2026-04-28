@@ -1,0 +1,41 @@
+name: 'CSV Entity Push'
+description: 'Detect CSV row changes and push SCIM SET events, validate CSV IDs, or generate missing IDs'
+author: 'SGNL Engineering'
+
+inputs:
+  mode:
+    description: 'Action mode: push, validate, or generate-ids'
+    required: true
+  csv-directory:
+    description: 'Path to the directory containing CSV files (also configurable via CSV_DIRECTORY env var)'
+    required: false
+    default: 'csv_files'
+  entity-push-url:
+    description: 'Endpoint URL for SCIM SET event POST (required for push mode)'
+    required: false
+  entity-push-iss:
+    description: 'JWT issuer claim (required for push mode)'
+    required: false
+  entity-push-aud:
+    description: 'JWT audience claim (required for push mode)'
+    required: false
+  entity-push-token:
+    description: 'HMAC signing secret and Bearer token (required for push mode)'
+    required: false
+  before-sha:
+    description: 'Override base commit SHA for diff (defaults to github.event.before)'
+    required: false
+
+outputs:
+  events-sent:
+    description: 'Number of SCIM events sent (push mode)'
+  events-failed:
+    description: 'Number of SCIM events that failed (push mode)'
+  ids-generated:
+    description: 'Number of IDs generated (generate-ids mode)'
+  validation-errors:
+    description: 'Number of validation errors found (validate mode)'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
