@@ -37,5 +37,5 @@ outputs:
     description: 'Number of validation errors found (validate mode)'
 
 runs:
-  using: 'node20'
+  using: 'node24'
   main: 'dist/index.js'
